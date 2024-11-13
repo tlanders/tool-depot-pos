@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Slf4j
 @Service
 public class CheckoutService {
-    public void checkout(String toolCode, int rentalDays, int discountPercent, LocalDate checkoutDate) {;
+    public void checkout(String toolCode, int rentalDays, int discountPercent, LocalDate checkoutDate) {
         log.debug("Checkout service called - tool={}, rentalDays={}, discountPercent={}, checkoutDate={}",
                 toolCode, rentalDays, discountPercent, checkoutDate);
     }
