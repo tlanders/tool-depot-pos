@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,13 +45,17 @@ public class CheckoutServiceTest {
                 () -> assertEquals(checkoutDate.plusDays(rentalDays), rental.dueDate()),
                 () -> assertEquals(testTool.dailyCharge(), rental.dailyRentalCharge()),
                 () -> assertEquals(rentalDays, rental.chargeDays()),
-                () -> assertEquals(testTool.dailyCharge().multiply(new BigDecimal(rentalDays)), rental.preDiscountCharge()),
+                () -> assertEquals(multiplyChargeByDays(testTool.dailyCharge(), rentalDays), rental.preDiscountCharge()),
                 () -> assertEquals(discountPercent, rental.discountPercent())
         );
 
         checkoutService.checkout("LADW", 1, 0, LocalDate.now());
         checkoutService.checkout("LADW", 3, 10, LocalDate.now());
         checkoutService.checkout("LADW", 7, 53, LocalDate.now());
+    }
+
+    private static BigDecimal multiplyChargeByDays(BigDecimal amount, int days) {
+        return amount.multiply(new BigDecimal(days)).setScale(2, RoundingMode.HALF_UP);
     }
 
     @Test

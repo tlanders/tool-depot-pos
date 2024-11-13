@@ -1,5 +1,6 @@
 package com.tooldepot.pos.service;
 
+import com.tooldepot.pos.domain.RentalCharge;
 import com.tooldepot.pos.domain.RentalTransaction;
 import com.tooldepot.pos.domain.Tool;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,8 @@ public class CheckoutService {
                 .orElseThrow(() -> new PosServiceException(PosServiceException.Error.INVALID_TOOL_CODE,
                         "Tool " + toolCode + " not found"));
 
+        RentalCharge rentalCharge = pricingService.calculateRentalCharges(tool.dailyCharge(), rentalDays, rentalDays, discountPercent);
+
         return new RentalTransaction(
                 tool,
                 rentalDays,
@@ -45,7 +48,7 @@ public class CheckoutService {
                 checkoutDate.plusDays(rentalDays),
                 tool.dailyCharge(),
                 rentalDays,
-                pricingService.calculateRentalCharges(tool.dailyCharge(), rentalDays),
+                rentalCharge.preDiscountCharge(),
                 discountPercent,
                 new BigDecimal("0.00"),
                 new BigDecimal("0.00"));
