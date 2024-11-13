@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -16,9 +15,15 @@ public class CheckoutService {
     @Autowired
     private ToolService toolService;
 
+    @Autowired
+    private PricingService pricingService;
+
     public RentalTransaction checkout(String toolCode, int rentalDays,
                                       int discountPercent, LocalDate checkoutDate
     ) throws PosServiceException {
+        log.debug("checkout service called - tool={}, rentalDays={}, discountPercent={}, checkoutDate={}",
+                toolCode, rentalDays, discountPercent, checkoutDate);
+
         if(rentalDays <= 0) {
             throw new PosServiceException(PosServiceException.Error.INVALID_RENTAL_DAYS, "Rental days must be greater than 0");
         }
@@ -29,24 +34,19 @@ public class CheckoutService {
 
         // TODO - add validation for checkout date
 
-        Optional<Tool> tool = toolService.getTool(toolCode);
-        if(tool.isEmpty()) {
-            throw new PosServiceException(PosServiceException.Error.INVALID_TOOL_CODE,
-                    "Tool " + toolCode + " not found");
-        }
-
-        log.debug("Checkout service called - tool={}, rentalDays={}, discountPercent={}, checkoutDate={}",
-                toolCode, rentalDays, discountPercent, checkoutDate);
+        Tool tool = toolService.getTool(toolCode)
+                .orElseThrow(() -> new PosServiceException(PosServiceException.Error.INVALID_TOOL_CODE,
+                        "Tool " + toolCode + " not found"));
 
         return new RentalTransaction(
-                tool.get(),
+                tool,
                 rentalDays,
                 checkoutDate,
-                LocalDate.now(),
-                new BigDecimal("0.00"),
-                0,
-                new BigDecimal("0.00"),
-                0,
+                checkoutDate.plusDays(rentalDays),
+                tool.dailyCharge(),
+                rentalDays,
+                pricingService.calculateRentalCharges(tool.dailyCharge(), rentalDays),
+                discountPercent,
                 new BigDecimal("0.00"),
                 new BigDecimal("0.00"));
     }

@@ -1,11 +1,15 @@
 package com.tooldepot.pos.service;
 
 import com.tooldepot.pos.domain.RentalTransaction;
+import com.tooldepot.pos.domain.Tool;
+import com.tooldepot.pos.domain.ToolType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,12 +20,34 @@ public class CheckoutServiceTest {
     @Autowired
     private CheckoutService checkoutService;
 
+    @Autowired
+    private ToolService toolService;
+
     @Test
     public void testValidCheckout() throws PosServiceException {
         log.info("Testing valid checkout");
 
-        RentalTransaction rental = checkoutService.checkout("LADW", 3, 0, LocalDate.now());
-        assertNotNull(rental);
+        Tool testTool = new Tool("LADW", ToolType.LADDER, "Werner",
+                new BigDecimal("1.99"), true, true, true);
+
+        int rentalDays = 3;
+        int discountPercent = 0;
+        LocalDate checkoutDate = LocalDate.now();
+        RentalTransaction rental = checkoutService.checkout(testTool.toolCode(), rentalDays, discountPercent, checkoutDate);
+        assertAll("rental",
+                () -> assertNotNull(rental),
+                () -> assertNotNull(rental.tool()),
+                () -> assertEquals(testTool.toolCode(), rental.tool().toolCode()),
+                () -> assertEquals(testTool.toolType(), rental.tool().toolType()),
+                () -> assertEquals(testTool.brand(), rental.tool().brand()),
+                () -> assertEquals(rentalDays, rental.rentalDays()),
+                () -> assertEquals(checkoutDate, rental.checkoutDate()),
+                () -> assertEquals(checkoutDate.plusDays(rentalDays), rental.dueDate()),
+                () -> assertEquals(testTool.dailyCharge(), rental.dailyRentalCharge()),
+                () -> assertEquals(rentalDays, rental.chargeDays()),
+                () -> assertEquals(testTool.dailyCharge().multiply(new BigDecimal(rentalDays)), rental.preDiscountCharge()),
+                () -> assertEquals(discountPercent, rental.discountPercent())
+        );
 
         checkoutService.checkout("LADW", 1, 0, LocalDate.now());
         checkoutService.checkout("LADW", 3, 10, LocalDate.now());
@@ -43,7 +69,7 @@ public class CheckoutServiceTest {
             checkoutService.checkout(toolCode, rentalDays, discount, checkoutDate);
             fail("Should not have thrown PosServiceException");
         } catch (PosServiceException e) {
-            assertEquals(expectedError, e.getErrorCode());
+            assertEquals(expectedError, e.getErrorCode(), "Error code should be " + expectedError);
         }
     }
 
