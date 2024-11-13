@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class PosServiceException extends Exception {
-    private Error errorCode;
+    private final Error errorCode;
 
     public PosServiceException(Error errorCode, String message) {
         super(message);
@@ -16,7 +16,7 @@ public class PosServiceException extends Exception {
         this.errorCode = errorCode;
     }
 
-    public static enum Error {
+    public enum Error {
         INVALID_DISCOUNT_PERCENTAGE,
         INVALID_RENTAL_DAYS,
         INVALID_TOOL_CODE
