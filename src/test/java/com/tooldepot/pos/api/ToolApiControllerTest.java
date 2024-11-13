@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -31,5 +32,26 @@ public class ToolApiControllerTest {
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(4)));
+    }
+
+    @Test
+    public void testGetTool() throws Exception{
+        log.info("testGetTool");
+
+        mockMvc.perform(get("/api/tools/CHNS")
+                .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.toolCode", equalTo("CHNS")));
+    }
+
+    @Test
+    public void testGetTool_unknownCode() throws Exception{
+        log.info("testGetTool_unknownCode");
+
+        mockMvc.perform(get("/api/tools/ZZZZ")
+                .contentType("application/json"))
+                .andExpect(status().isNotFound());
     }
 }

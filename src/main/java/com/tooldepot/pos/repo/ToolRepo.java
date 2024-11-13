@@ -5,22 +5,25 @@ import com.tooldepot.pos.domain.ToolType;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ToolRepo {
-    private final List<Tool> tools = new ArrayList<>();
+    private final Map<String, Tool> tools = new HashMap<>();
 
     public ToolRepo() {
-        tools.add(new Tool("CHNS", ToolType.CHAINSAW, "Stihl", new BigDecimal("1.49"), true, false, true));
-        tools.add(new Tool("LADW", ToolType.LADDER, "Werner", new BigDecimal("1.99"), true, true, false));
-        tools.add(new Tool("JAKD", ToolType.JACKHAMMER, "DeWalt", new BigDecimal("2.99"), true, false, false));
-        tools.add(new Tool("JAKR", ToolType.JACKHAMMER, "Ridgid", new BigDecimal("2.99"), true, false, false));
+        tools.put("CHNS", new Tool("CHNS", ToolType.CHAINSAW, "Stihl", new BigDecimal("1.49"), true, false, true));
+        tools.put("LADW", new Tool("LADW", ToolType.LADDER, "Werner", new BigDecimal("1.99"), true, true, false));
+        tools.put("JAKD", new Tool("JAKD", ToolType.JACKHAMMER, "DeWalt", new BigDecimal("2.99"), true, false, false));
+        tools.put("JAKR", new Tool("JAKR", ToolType.JACKHAMMER, "Ridgid", new BigDecimal("2.99"), true, false, false));
     }
 
     public List<Tool> findAllTools() {
-        return Collections.unmodifiableList(tools);
+        return new ArrayList<>(tools.values());
+    }
+
+    public Optional<Tool> getTool(String toolCode) {
+        Tool tool = tools.get(toolCode);
+        return Optional.ofNullable(tool);
     }
 }
