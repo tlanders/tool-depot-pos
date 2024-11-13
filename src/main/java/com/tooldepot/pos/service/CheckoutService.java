@@ -18,15 +18,19 @@ public class CheckoutService {
                          int discountPercent, LocalDate checkoutDate
     ) throws PosServiceException {
         if(rentalDays <= 0) {
-            throw new PosServiceException("Rental days must be greater than 0");
+            throw new PosServiceException(PosServiceException.Error.INVALID_RENTAL_DAYS, "Rental days must be greater than 0");
         }
         if(discountPercent < 0 || discountPercent > 100) {
-            throw new PosServiceException("Discount percent must be between 0 and 100");
+            throw new PosServiceException(PosServiceException.Error.INVALID_DISCOUNT_PERCENTAGE,
+                    "Discount percent must be between 0 and 100");
         }
+
+        // TODO - add validation for checkout date
 
         Optional<Tool> tool = toolService.getTool(toolCode);
         if(tool.isEmpty()) {
-            throw new PosServiceException("Tool " + toolCode + " not found");
+            throw new PosServiceException(PosServiceException.Error.INVALID_TOOL_CODE,
+                    "Tool " + toolCode + " not found");
         }
 
         log.debug("Checkout service called - tool={}, rentalDays={}, discountPercent={}, checkoutDate={}",

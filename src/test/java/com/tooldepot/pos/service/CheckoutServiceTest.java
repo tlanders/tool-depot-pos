@@ -29,33 +29,34 @@ public class CheckoutServiceTest {
     public void testValidCheckout_invalidRentalDays() {
         log.info("Testing checkout invalid rental days");
 
-        assertThrows(PosServiceException.class, () -> {
-            checkoutService.checkout("LADW", 0, 0, LocalDate.now());
-        });
+        checkoutWithException("LADW", 0, 0, LocalDate.now(), PosServiceException.Error.INVALID_RENTAL_DAYS);
+        checkoutWithException("LADW", -1, 0, LocalDate.now(), PosServiceException.Error.INVALID_RENTAL_DAYS);
+        checkoutWithException("LADW", -999, 0, LocalDate.now(), PosServiceException.Error.INVALID_RENTAL_DAYS);
+    }
 
-        assertThrows(PosServiceException.class, () -> {
-            checkoutService.checkout("LADW", -1, 0, LocalDate.now());
-        });
+    private void checkoutWithException(String toolCode, int rentalDays, int discount,
+                                       LocalDate checkoutDate, PosServiceException.Error expectedError) {
+        try {
+            checkoutService.checkout(toolCode, rentalDays, discount, checkoutDate);
+            fail("Should not have thrown PosServiceException");
+        } catch (PosServiceException e) {
+            assertEquals(expectedError, e.getErrorCode());
+        }
     }
 
     @Test
     public void testValidCheckout_invalidToolCode() {
         log.info("Testing checkout invalid tool code");
-        assertThrows(PosServiceException.class, () -> {
-            checkoutService.checkout("ABCD", 1, 0, LocalDate.now());
-        });
+        checkoutWithException("ABCD", 1, 0, LocalDate.now(), PosServiceException.Error.INVALID_TOOL_CODE);
     }
 
     @Test
     public void testValidCheckout_invalidDiscount() {
         log.info("Testing checkout invalid discount");
 
-        assertThrows(PosServiceException.class, () -> {
-            checkoutService.checkout("LADW", 2, -1, LocalDate.now());
-        });
-
-        assertThrows(PosServiceException.class, () -> {
-            checkoutService.checkout("LADW", -1, 101, LocalDate.now());
-        });
+        checkoutWithException("JAKR", 2, -1, LocalDate.now(), PosServiceException.Error.INVALID_DISCOUNT_PERCENTAGE);
+        checkoutWithException("JAKR", 2, 101, LocalDate.now(), PosServiceException.Error.INVALID_DISCOUNT_PERCENTAGE);
+        checkoutWithException("JAKR", 2, -999, LocalDate.now(), PosServiceException.Error.INVALID_DISCOUNT_PERCENTAGE);
+        checkoutWithException("JAKR", 2, 255, LocalDate.now(), PosServiceException.Error.INVALID_DISCOUNT_PERCENTAGE);
     }
 }
