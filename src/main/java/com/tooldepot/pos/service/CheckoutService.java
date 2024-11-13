@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static com.tooldepot.pos.util.BigDecimalUtil.newBD;
+
 @Slf4j
 @Service
 public class CheckoutService {
@@ -50,7 +52,7 @@ public class CheckoutService {
                 rentalDays,
                 rentalCharge.preDiscountCharge(),
                 discountPercent,
-                new BigDecimal("0.00"),
-                new BigDecimal("0.00"));
+                newBD("0.00"),
+                newBD("0.00"));
     }
 }

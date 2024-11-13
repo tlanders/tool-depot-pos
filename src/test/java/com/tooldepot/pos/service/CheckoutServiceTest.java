@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 
+import static com.tooldepot.pos.util.BigDecimalUtil.newBD;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -28,7 +29,7 @@ public class CheckoutServiceTest {
         log.info("Testing valid checkout");
 
         Tool testTool = new Tool("LADW", ToolType.LADDER, "Werner",
-                new BigDecimal("1.99"), true, true, true);
+                newBD("1.99"), true, true, true);
 
         int rentalDays = 3;
         int discountPercent = 0;
@@ -55,7 +56,7 @@ public class CheckoutServiceTest {
     }
 
     private static BigDecimal multiplyChargeByDays(BigDecimal amount, int days) {
-        return amount.multiply(new BigDecimal(days)).setScale(2, RoundingMode.HALF_UP);
+        return amount.multiply(newBD(days)).setScale(2, RoundingMode.HALF_UP);
     }
 
     @Test

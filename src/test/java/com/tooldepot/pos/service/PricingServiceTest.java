@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 
+import static com.tooldepot.pos.util.BigDecimalUtil.newBD;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -18,14 +19,26 @@ public class PricingServiceTest {
 
     @Test
     public void testCalculateRentalCharges() {
-        testRentalCharges(new BigDecimal("5.97"), new BigDecimal("5.97"), new BigDecimal("1.99"), 3, 3, 0);
+        testRentalCharges(newBD("5.97"), newBD("0.00"), newBD("5.97"), newBD("1.99"), 3, 3, 0);
+        testRentalCharges(newBD("5.97"), newBD("0.60"), newBD("5.37"), newBD("1.99"), 3, 3, 10);
+//        testRentalCharges(newBD("3.98"), newBD("0.00"), newBD("3.98"), newBD("1.99"), 3, 2, 0);
     }
 
-    private void testRentalCharges(BigDecimal expectedPreDiscountCharge, BigDecimal expectedFinalCharge,
+    private void testRentalCharges(BigDecimal expectedPreDiscountCharge, BigDecimal expectedDiscountAmount, BigDecimal expectedFinalCharge,
                                           BigDecimal rentalRate, int daysRented, int chargeDays, int discountPercent) {
-        RentalCharge rentalCharge = pricingService.calculateRentalCharges(new BigDecimal("1.99"), 3, 3, 0);
+        RentalCharge rentalCharge = pricingService.calculateRentalCharges(rentalRate, daysRented, chargeDays, discountPercent);
 
-        assertEquals(new BigDecimal("5.97"), rentalCharge.preDiscountCharge());
-        assertEquals(new BigDecimal("5.97"), rentalCharge.finalCharge());
+        assertEquals(expectedPreDiscountCharge, rentalCharge.preDiscountCharge());
+        assertEquals(expectedDiscountAmount, rentalCharge.discountAmount());
+        assertEquals(expectedFinalCharge, rentalCharge.finalCharge());
+    }
+
+    @Test
+    public void testCalculateDiscountMultiplier() {
+        assertEquals(newBD("0.00"), pricingService.calculateDiscountMultiplier(0));
+        assertEquals(newBD("1.00"), pricingService.calculateDiscountMultiplier(100));
+        assertEquals(newBD("0.50"), pricingService.calculateDiscountMultiplier(50));
+        assertEquals(newBD("0.33"), pricingService.calculateDiscountMultiplier(33));
+        assertEquals(newBD("0.75"), pricingService.calculateDiscountMultiplier(75));
     }
 }
