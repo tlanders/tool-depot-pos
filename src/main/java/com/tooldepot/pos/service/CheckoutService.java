@@ -1,10 +1,12 @@
 package com.tooldepot.pos.service;
 
+import com.tooldepot.pos.domain.RentalTransaction;
 import com.tooldepot.pos.domain.Tool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -14,8 +16,8 @@ public class CheckoutService {
     @Autowired
     private ToolService toolService;
 
-    public void checkout(String toolCode, int rentalDays,
-                         int discountPercent, LocalDate checkoutDate
+    public RentalTransaction checkout(String toolCode, int rentalDays,
+                                      int discountPercent, LocalDate checkoutDate
     ) throws PosServiceException {
         if(rentalDays <= 0) {
             throw new PosServiceException(PosServiceException.Error.INVALID_RENTAL_DAYS, "Rental days must be greater than 0");
@@ -35,5 +37,17 @@ public class CheckoutService {
 
         log.debug("Checkout service called - tool={}, rentalDays={}, discountPercent={}, checkoutDate={}",
                 toolCode, rentalDays, discountPercent, checkoutDate);
+
+        return new RentalTransaction(
+                tool.get(),
+                rentalDays,
+                checkoutDate,
+                LocalDate.now(),
+                new BigDecimal("0.00"),
+                0,
+                new BigDecimal("0.00"),
+                0,
+                new BigDecimal("0.00"),
+                new BigDecimal("0.00"));
     }
 }

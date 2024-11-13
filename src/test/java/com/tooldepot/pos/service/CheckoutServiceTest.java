@@ -1,5 +1,6 @@
 package com.tooldepot.pos.service;
 
+import com.tooldepot.pos.domain.RentalTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,9 @@ public class CheckoutServiceTest {
     public void testValidCheckout() throws PosServiceException {
         log.info("Testing valid checkout");
 
-        checkoutService.checkout("LADW", 3, 0, LocalDate.now());
+        RentalTransaction rental = checkoutService.checkout("LADW", 3, 0, LocalDate.now());
+        assertNotNull(rental);
+
         checkoutService.checkout("LADW", 1, 0, LocalDate.now());
         checkoutService.checkout("LADW", 3, 10, LocalDate.now());
         checkoutService.checkout("LADW", 7, 53, LocalDate.now());
