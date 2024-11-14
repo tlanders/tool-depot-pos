@@ -27,6 +27,19 @@ class RentalPeriodServiceTest {
     }
 
     @Test
+    public void testGetRentalPeriodNoHolidayChrage() {
+        Tool toolNoHolidayCharge = new Tool("LADW", ToolType.LADDER, "Werner");
+
+        testRentalPeriodCalculations(5, toolNoHolidayCharge, LocalDate.of(2024, 11, 16), 5);   // Sat, 5 days, no holidays
+        testRentalPeriodCalculations(2, toolNoHolidayCharge, LocalDate.of(2024, 11, 15), 2);   // Fri, 2 days, no holidays
+        testRentalPeriodCalculations(2, toolNoHolidayCharge, LocalDate.of(2024, 11, 17), 2);   // Sun, 2 days, no holidays
+
+        testRentalPeriodCalculations(2, toolNoHolidayCharge, LocalDate.of(2024, 7, 3), 3);   // Thu July 4, 3 days
+
+        testRentalPeriodCalculations(0, toolNoHolidayCharge, LocalDate.of(2024, 11, 1), 0);   // Fri, 0 days, no holidays
+    }
+
+    @Test
     public void testGetRentalPeriodNoWeekendCharge() {
         Tool toolNoWeekendCharge = new Tool("CHNS", ToolType.CHAINSAW, "Werner");
 
