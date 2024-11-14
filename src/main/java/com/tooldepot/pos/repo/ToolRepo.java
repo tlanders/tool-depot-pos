@@ -6,17 +6,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.tooldepot.pos.util.BigDecimalUtil.newBD;
-
 @Service
 public class ToolRepo {
     private final Map<String, Tool> tools = new HashMap<>();
 
     public ToolRepo() {
-        tools.put("CHNS", new Tool("CHNS", ToolType.CHAINSAW, "Stihl", newBD("1.49"), true, false, true));
-        tools.put("LADW", new Tool("LADW", ToolType.LADDER, "Werner", newBD("1.99"), true, true, false));
-        tools.put("JAKD", new Tool("JAKD", ToolType.JACKHAMMER, "DeWalt", newBD("2.99"), true, false, false));
-        tools.put("JAKR", new Tool("JAKR", ToolType.JACKHAMMER, "Ridgid", newBD("2.99"), true, false, false));
+        tools.put("CHNS", new Tool("CHNS", ToolType.CHAINSAW, "Stihl"));
+        tools.put("LADW", new Tool("LADW", ToolType.LADDER, "Werner"));
+        tools.put("JAKD", new Tool("JAKD", ToolType.JACKHAMMER, "DeWalt"));
+        tools.put("JAKR", new Tool("JAKR", ToolType.JACKHAMMER, "Ridgid"));
     }
 
     public List<Tool> findAllTools() {

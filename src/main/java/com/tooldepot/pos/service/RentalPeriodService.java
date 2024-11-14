@@ -13,14 +13,22 @@ import java.util.*;
 @Slf4j
 public class RentalPeriodService {
     public RentalPeriod getRentalPeriod(Tool tool, LocalDate checkoutDate, int rentalDays) {
-        log.info("getRentalPeriod(tool={}, checkoutDate={}, rentalDays={})", tool, checkoutDate, rentalDays);
+        log.debug("getRentalPeriod(tool={}, checkoutDate={}, rentalDays={})", tool, checkoutDate, rentalDays);
+        return getRentalPeriod(checkoutDate, rentalDays, tool.toolType().isWeekdayCharge(),
+                tool.toolType().isWeekendCharge(), tool.toolType().isHolidayCharge());
+    }
+
+    protected RentalPeriod getRentalPeriod(LocalDate checkoutDate, int rentalDays, boolean isWeekdayCharge,
+                                           boolean isWeekendCharge, boolean isHolidayCharge) {
+        log.debug("getRentalPeriod - checkoutDate={}, rentalDays={}, weekdayCharge={}, weekendCharge={}, holidayCharge={}",
+                checkoutDate, rentalDays, isWeekdayCharge, isWeekendCharge, isHolidayCharge);
 
         Set<LocalDate> noChargeDays = new TreeSet<>();
         for(int i = 0; i < rentalDays; i++) {
             LocalDate date = checkoutDate.plusDays(i);
-            if(isWeekday(date) && !tool.weekdayCharge()) {
+            if(isWeekday(date) && !isWeekdayCharge) {
                 noChargeDays.add(date);
-            } else if(isWeekend(date) && !tool.weekendCharge()) {
+            } else if(isWeekend(date) && !isWeekendCharge) {
                 noChargeDays.add(date);
             }
         }

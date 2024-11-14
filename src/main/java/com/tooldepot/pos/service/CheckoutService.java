@@ -38,14 +38,14 @@ public class CheckoutService {
                 .orElseThrow(() -> new PosServiceException(PosServiceException.Error.INVALID_TOOL_CODE,
                         "Tool " + toolCode + " not found"));
 
-        RentalCharge rentalCharge = pricingService.calculateRentalCharges(tool.dailyCharge(), rentalDays, discountPercent);
+        RentalCharge rentalCharge = pricingService.calculateRentalCharges(tool.toolType().getDailyCharge(), rentalDays, discountPercent);
 
         return new RentalTransaction(
                 tool,
                 rentalDays,
                 checkoutDate,
                 checkoutDate.plusDays(rentalDays),
-                tool.dailyCharge(),
+                tool.toolType().getDailyCharge(),
                 rentalDays,
                 rentalCharge.preDiscountCharge(),
                 discountPercent,

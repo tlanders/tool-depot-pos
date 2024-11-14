@@ -28,8 +28,7 @@ public class CheckoutServiceTest {
     public void testValidCheckout() throws PosServiceException {
         log.info("Testing valid checkout");
 
-        Tool testTool = new Tool("LADW", ToolType.LADDER, "Werner",
-                newBD("1.99"), true, true, true);
+        Tool testTool = new Tool("LADW", ToolType.LADDER, "Werner");
 
         int rentalDays = 3;
         int discountPercent = 0;
@@ -44,9 +43,9 @@ public class CheckoutServiceTest {
                 () -> assertEquals(rentalDays, rental.rentalDays()),
                 () -> assertEquals(checkoutDate, rental.checkoutDate()),
                 () -> assertEquals(checkoutDate.plusDays(rentalDays), rental.dueDate()),
-                () -> assertEquals(testTool.dailyCharge(), rental.dailyRentalCharge()),
+                () -> assertEquals(testTool.toolType().getDailyCharge(), rental.dailyRentalCharge()),
                 () -> assertEquals(rentalDays, rental.chargeDays()),
-                () -> assertEquals(multiplyChargeByDays(testTool.dailyCharge(), rentalDays), rental.preDiscountCharge()),
+                () -> assertEquals(multiplyChargeByDays(testTool.toolType().getDailyCharge(), rentalDays), rental.preDiscountCharge()),
                 () -> assertEquals(discountPercent, rental.discountPercent())
         );
 
