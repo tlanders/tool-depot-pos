@@ -21,20 +21,29 @@ class RentalPeriodServiceTest {
 
     @Test
     public void testGetRentalPeriod() {
-        Tool testTool = new Tool("LADW", ToolType.LADDER, "Werner",
+        Tool toolAllDaysCharged = new Tool("LADW", ToolType.LADDER, "Werner",
                 newBD("1.99"), true, true, true);
+        Tool toolNoWeekdayCharge = new Tool("LADW", ToolType.LADDER, "Werner",
+                newBD("1.99"), false, true, true);
+        Tool toolNoWeekendCharge = new Tool("LADW", ToolType.LADDER, "Werner",
+                newBD("1.99"), true, false, true);
+        Tool toolNoHolidayCharge = new Tool("LADW", ToolType.LADDER, "Werner",
+                newBD("1.99"), true, true, false);
+        Tool toolNoCharges = new Tool("LADW", ToolType.LADDER, "Werner",
+                newBD("1.99"), false, false, false);
 
-        testRentalPeriodCalculations(testTool, LocalDate.of(2024, 11, 9), 3);   // Mon, 3 days, no weekend, no holiday
+        testRentalPeriodCalculations(3, toolAllDaysCharged, LocalDate.of(2024, 11, 11), 3);   // Mon, 3 days, no holidays
+        testRentalPeriodCalculations(4, toolAllDaysCharged, LocalDate.of(2024, 11, 16), 4);   // Sat, 4 days, no holidays
     }
 
-    private void testRentalPeriodCalculations(Tool testTool, LocalDate checkoutDate, int rentalDays) {
+    private void testRentalPeriodCalculations(int expectedChargeDays, Tool testTool, LocalDate checkoutDate, int rentalDays) {
         RentalPeriod period = rentalPeriodService.getRentalPeriod(testTool, checkoutDate, rentalDays);
 
         assertAll("rentalPeriod",
+                () -> assertEquals(expectedChargeDays, period.chargeDays()),
                 () -> assertEquals(rentalDays, period.rentalDays()),
                 () -> assertEquals(checkoutDate, period.checkoutDate()),
-                () -> assertEquals(checkoutDate.plusDays(rentalDays), period.returnDate()),
-                () -> assertEquals(rentalDays, period.chargeDays())
+                () -> assertEquals(checkoutDate.plusDays(rentalDays), period.returnDate())
         );
     }
 }

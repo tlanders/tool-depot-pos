@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
-import static com.tooldepot.pos.util.BigDecimalUtil.newBD;
-
 @Slf4j
 @Service
 public class CheckoutService {
