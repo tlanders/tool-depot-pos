@@ -19,14 +19,14 @@ public class PricingServiceTest {
 
     @Test
     public void testCalculateRentalCharges() {
-        testRentalCharges(newBD("5.97"), newBD("0.00"), newBD("5.97"), newBD("1.99"), 3, 3, 0);
-        testRentalCharges(newBD("5.97"), newBD("0.60"), newBD("5.37"), newBD("1.99"), 3, 3, 10);
-//        testRentalCharges(newBD("3.98"), newBD("0.00"), newBD("3.98"), newBD("1.99"), 3, 2, 0);
+        testRentalCharges(newBD("5.97"), newBD("0.00"), newBD("5.97"), newBD("1.99"), 3, 0);
+        testRentalCharges(newBD("5.97"), newBD("0.60"), newBD("5.37"), newBD("1.99"), 3, 10);
+        testRentalCharges(newBD("3.98"), newBD("0.00"), newBD("3.98"), newBD("1.99"), 2, 0);
     }
 
     private void testRentalCharges(BigDecimal expectedPreDiscountCharge, BigDecimal expectedDiscountAmount, BigDecimal expectedFinalCharge,
-                                          BigDecimal rentalRate, int daysRented, int chargeDays, int discountPercent) {
-        RentalCharge rentalCharge = pricingService.calculateRentalCharges(rentalRate, daysRented, chargeDays, discountPercent);
+                                   BigDecimal rentalRate, int chargeDays, int discountPercent) {
+        RentalCharge rentalCharge = pricingService.calculateRentalCharges(rentalRate, chargeDays, discountPercent);
 
         assertEquals(expectedPreDiscountCharge, rentalCharge.preDiscountCharge());
         assertEquals(expectedDiscountAmount, rentalCharge.discountAmount());

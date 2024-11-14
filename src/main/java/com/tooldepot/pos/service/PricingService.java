@@ -13,12 +13,12 @@ import static com.tooldepot.pos.util.BigDecimalUtil.*;
 @Slf4j
 public class PricingService {
 
-    public RentalCharge calculateRentalCharges(BigDecimal dailyRate, int daysRented, int chargeDays, int discountPercent) {
+    public RentalCharge calculateRentalCharges(BigDecimal dailyRate, int chargeDays, int discountPercent) {
         Objects.requireNonNull(dailyRate, "dailyRate is required");
 
-        log.debug("calculateRentalCharge dailyRate={}, daysRented={}", dailyRate, daysRented);
+        log.debug("calculateRentalCharge dailyRate={}, chargeDays={}, discountPercent={}", dailyRate, chargeDays, discountPercent);
 
-        BigDecimal preDiscountCharge = multiply(dailyRate, daysRented, 2);
+        BigDecimal preDiscountCharge = multiply(dailyRate, chargeDays, 2);
         BigDecimal discountAmount = multiply(preDiscountCharge, calculateDiscountMultiplier(discountPercent), 2);
         BigDecimal finalCharge = preDiscountCharge.subtract(discountAmount);
 
