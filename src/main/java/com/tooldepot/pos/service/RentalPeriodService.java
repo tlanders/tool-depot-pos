@@ -26,14 +26,19 @@ public class RentalPeriodService {
         Set<LocalDate> noChargeDays = new TreeSet<>();
         for(int i = 0; i < rentalDays; i++) {
             LocalDate date = checkoutDate.plusDays(i);
-            if(isWeekday(date) && !isWeekdayCharge) {
-                noChargeDays.add(date);
-            } else if(isWeekend(date) && !isWeekendCharge) {
+            if((!isWeekdayCharge && isWeekday(date))
+                    || (!isWeekendCharge && isWeekend(date))
+                    || (!isHolidayCharge && isHoliday(date)))
+            {
                 noChargeDays.add(date);
             }
         }
 
         return new RentalPeriod(rentalDays, rentalDays - noChargeDays.size(), checkoutDate, checkoutDate.plusDays(rentalDays));
+    }
+
+    private static boolean isHoliday(LocalDate date) {
+        return false;
     }
 
     private static boolean isWeekend(LocalDate date) {
