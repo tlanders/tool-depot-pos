@@ -25,9 +25,7 @@ public class RentalPeriodService {
             }
         }
 
-        int chargeDays = rentalDays - noChargeDays.size();
-
-        return new RentalPeriod(rentalDays, chargeDays, checkoutDate, checkoutDate.plusDays(rentalDays));
+        return new RentalPeriod(rentalDays, rentalDays - noChargeDays.size(), checkoutDate, checkoutDate.plusDays(rentalDays));
     }
 
     private static boolean isWeekend(LocalDate date) {
