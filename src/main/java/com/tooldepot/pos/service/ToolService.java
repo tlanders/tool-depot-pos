@@ -12,8 +12,11 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class ToolService {
-    @Autowired
-    private ToolRepo toolRepo;
+    private final ToolRepo toolRepo;
+
+    public ToolService(ToolRepo toolRepo) {
+        this.toolRepo = toolRepo;
+    }
 
     public List<Tool> findAllTools() {
         return toolRepo.findAllTools();

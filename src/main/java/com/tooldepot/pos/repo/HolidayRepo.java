@@ -14,11 +14,15 @@ import java.util.List;
 import static com.tooldepot.pos.domain.Holiday.AppearanceModifier.CLOSEST_WEEKDAY;
 import static com.tooldepot.pos.domain.Holiday.AppearanceOrderInMonth.FIRST;
 
+/**
+ * Demo repo to be replaced by a real db.
+ */
 @Service
 public class HolidayRepo {
-    public List<Holiday> holidays = new ArrayList<>();
+    public final List<Holiday> holidays = new ArrayList<>();
 
     public HolidayRepo() {
+        // TODO - make this data-driven
         holidays.add(new ExactDayHoliday("Independence Day", Month.JULY, 4, CLOSEST_WEEKDAY));
         holidays.add(new DayOfWeekAndMonthHoliday("Labor Day", Month.SEPTEMBER, DayOfWeek.MONDAY, FIRST));
     }

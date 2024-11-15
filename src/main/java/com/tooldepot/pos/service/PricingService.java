@@ -9,6 +9,9 @@ import java.util.Objects;
 
 import static com.tooldepot.pos.util.BigDecimalUtil.*;
 
+/**
+ * Service to calculate rental charges for a tool rental.
+ */
 @Service
 @Slf4j
 public class PricingService {

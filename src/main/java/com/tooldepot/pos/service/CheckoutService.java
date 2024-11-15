@@ -1,22 +1,29 @@
 package com.tooldepot.pos.service;
 
 import com.tooldepot.pos.domain.RentalCharge;
+import com.tooldepot.pos.domain.RentalPeriod;
 import com.tooldepot.pos.domain.RentalTransaction;
 import com.tooldepot.pos.domain.Tool;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+/**
+ * Orchestrates the checkout process for a tool rental.
+ */
 @Slf4j
 @Service
 public class CheckoutService {
-    @Autowired
-    private ToolService toolService;
+    private final ToolService toolService;
+    private final RentalPeriodService rentalPeriodService;
+    private final PricingService pricingService;
 
-    @Autowired
-    private PricingService pricingService;
+    public CheckoutService(ToolService toolService, RentalPeriodService rentalPeriodService, PricingService pricingService) {
+        this.toolService = toolService;
+        this.rentalPeriodService = rentalPeriodService;
+        this.pricingService = pricingService;
+    }
 
     public RentalTransaction checkout(String toolCode, int rentalDays,
                                       int discountPercent, LocalDate checkoutDate
@@ -32,13 +39,15 @@ public class CheckoutService {
                     "Discount percent must be between 0 and 100");
         }
 
-        // TODO - add validation for checkout date
+        // TODO - how to validate checkout date?
 
         Tool tool = toolService.getTool(toolCode)
                 .orElseThrow(() -> new PosServiceException(PosServiceException.Error.INVALID_TOOL_CODE,
                         "Tool " + toolCode + " not found"));
 
-        RentalCharge rentalCharge = pricingService.calculateRentalCharges(tool.toolType().getDailyCharge(), rentalDays, discountPercent);
+        RentalPeriod rentalPeriod = rentalPeriodService.getRentalPeriod(tool.toolType(), checkoutDate, rentalDays);
+        RentalCharge rentalCharge = pricingService.calculateRentalCharges(tool.toolType().getDailyCharge(),
+                rentalPeriod.chargeDays(), discountPercent);
 
         return new RentalTransaction(
                 tool,
@@ -46,7 +55,7 @@ public class CheckoutService {
                 checkoutDate,
                 checkoutDate.plusDays(rentalDays),
                 tool.toolType().getDailyCharge(),
-                rentalDays,
+                rentalPeriod.chargeDays(),
                 rentalCharge.preDiscountCharge(),
                 discountPercent,
                 rentalCharge.discountAmount(),

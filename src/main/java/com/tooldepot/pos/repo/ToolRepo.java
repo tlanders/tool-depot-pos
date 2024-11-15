@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Demo repo to be replaced by a real db.
+ */
 @Service
 public class ToolRepo {
     private final Map<String, Tool> tools = new HashMap<>();

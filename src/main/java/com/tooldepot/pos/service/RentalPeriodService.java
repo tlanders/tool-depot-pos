@@ -18,8 +18,11 @@ import java.util.*;
 @Service
 @Slf4j
 public class RentalPeriodService {
-    @Autowired
-    private HolidayRepo holidayRepo;
+    private final HolidayRepo holidayRepo;
+
+    public RentalPeriodService(HolidayRepo holidayRepo) {
+        this.holidayRepo = holidayRepo;
+    }
 
     public RentalPeriod getRentalPeriod(ToolType toolType, LocalDate checkoutDate, int rentalDays) {
         log.debug("getRentalPeriod(toolType={}, checkoutDate={}, rentalDays={})", toolType, checkoutDate, rentalDays);
