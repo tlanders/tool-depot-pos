@@ -14,10 +14,10 @@ public class ToolRepo {
     private final Map<String, Tool> tools = new HashMap<>();
 
     public ToolRepo() {
-        tools.put("CHNS", new Tool("CHNS", ToolType.CHAINSAW, "Stihl"));
-        tools.put("LADW", new Tool("LADW", ToolType.LADDER, "Werner"));
-        tools.put("JAKD", new Tool("JAKD", ToolType.JACKHAMMER, "DeWalt"));
-        tools.put("JAKR", new Tool("JAKR", ToolType.JACKHAMMER, "Ridgid"));
+        tools.put("CHNS", new Tool("CHNS", ToolType.Chainsaw, "Stihl"));
+        tools.put("LADW", new Tool("LADW", ToolType.Ladder, "Werner"));
+        tools.put("JAKD", new Tool("JAKD", ToolType.Jackhammer, "DeWalt"));
+        tools.put("JAKR", new Tool("JAKR", ToolType.Jackhammer, "Ridgid"));
     }
 
     public List<Tool> findAllTools() {

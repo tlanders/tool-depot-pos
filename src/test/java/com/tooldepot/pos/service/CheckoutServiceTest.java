@@ -33,24 +33,24 @@ public class CheckoutServiceTest {
         log.info("Testing valid checkout");
 
         // Ladders don't charge on holidays
-        testValidCheckout(new Tool("LADW", ToolType.LADDER, "Werner"),
+        testValidCheckout(new Tool("LADW", ToolType.Ladder, "Werner"),
                 new RentalPeriod(3, 3,
                         LocalDate.of(2024, 11, 1),
                         LocalDate.of(2024, 11, 1).plusDays(3)),
                 0);
-        testValidCheckout(new Tool("LADW", ToolType.LADDER, "Werner"),
+        testValidCheckout(new Tool("LADW", ToolType.Ladder, "Werner"),
                 new RentalPeriod(6, 5,
                         LocalDate.of(2024, 7, 1),
                         LocalDate.of(2024, 7, 1).plusDays(6)),
                         10);
 
         // Jackhammers don't charge on weekends or holidays
-        testValidCheckout(new Tool("JCKB", ToolType.JACKHAMMER, "Jackhammer Brand"),
+        testValidCheckout(new Tool("JCKB", ToolType.Jackhammer, "Jackhammer Brand"),
                 new RentalPeriod(10, 7,
                         LocalDate.of(2024, 11, 20),
                         LocalDate.of(2024, 11, 20).plusDays(10)),
                         33);
-        testValidCheckout(new Tool("JCKB", ToolType.JACKHAMMER, "Jackhammer Brand"),
+        testValidCheckout(new Tool("JCKB", ToolType.Jackhammer, "Jackhammer Brand"),
                 new RentalPeriod(10, 6,
                         LocalDate.of(2024, 11, 9),
                         LocalDate.of(2024, 11, 9).plusDays(10)),
@@ -102,7 +102,7 @@ public class CheckoutServiceTest {
             checkoutService.checkout(toolCode, rentalDays, discount, checkoutDate);
             fail("Should have thrown PosServiceException");
         } catch (PosServiceException e) {
-            assertEquals(expectedError, e.getErrorCode(), "Error code should be " + expectedError);
+            assertEquals(expectedError, e.getError(), "Error code should be " + expectedError);
         }
     }
 

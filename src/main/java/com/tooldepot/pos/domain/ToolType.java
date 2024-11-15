@@ -9,9 +9,9 @@ import static com.tooldepot.pos.util.BigDecimalUtil.newBD;
 @Getter
 public enum ToolType {
     // TODO - make this data-driven. can't do enum, but can implement something similar.
-    LADDER("Ladder", newBD("1.99"), true, true, false),
-    CHAINSAW("Chainsaw", newBD("1.49"), true, false, true),
-    JACKHAMMER("Jackhammer", newBD("2.99"), true, false, false);
+    Ladder("Ladder", newBD("1.99"), true, true, false),
+    Chainsaw("Chainsaw", newBD("1.49"), true, false, true),
+    Jackhammer("Jackhammer", newBD("2.99"), true, false, false);
 
     private final String description;
     private final BigDecimal dailyCharge;

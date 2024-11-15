@@ -4,21 +4,28 @@ import lombok.Getter;
 
 @Getter
 public class PosServiceException extends Exception {
-    private final Error errorCode;
+    private final Error error;
 
-    public PosServiceException(Error errorCode, String message) {
+    public PosServiceException(Error error, String message) {
         super(message);
-        this.errorCode = errorCode;
+        this.error = error;
     }
 
-    public PosServiceException(Error errorCode, String message, Throwable cause) {
+    public PosServiceException(Error error, String message, Throwable cause) {
         super(message, cause);
-        this.errorCode = errorCode;
+        this.error = error;
     }
 
+    @Getter
     public enum Error {
-        INVALID_DISCOUNT_PERCENTAGE,
-        INVALID_RENTAL_DAYS,
-        INVALID_TOOL_CODE
+        INVALID_DISCOUNT_PERCENTAGE(1),
+        INVALID_RENTAL_DAYS(2),
+        INVALID_TOOL_CODE(3);
+
+        private final int errorCode;
+
+        Error(int errorCode) {
+            this.errorCode = errorCode;
+        }
     }
 }

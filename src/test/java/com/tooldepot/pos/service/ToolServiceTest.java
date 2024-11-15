@@ -34,7 +34,7 @@ public class ToolServiceTest {
                 .isPresent()
                 .get()
                 .extracting(Tool::toolType)
-                .isEqualTo(ToolType.LADDER);
+                .isEqualTo(ToolType.Ladder);
     }
 
     @Test

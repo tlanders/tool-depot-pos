@@ -27,7 +27,7 @@ class RentalPeriodServiceTest {
 
     @Test
     public void testGetRentalPeriodNoHolidayCharge() {
-        ToolType noHolidayChargeToolType = ToolType.LADDER;
+        ToolType noHolidayChargeToolType = ToolType.Ladder;
 
         testRentalPeriodCalculations(5, noHolidayChargeToolType, LocalDate.of(2024, 11, 16), 5);   // Sat, 5 days, no holidays
         testRentalPeriodCalculations(2, noHolidayChargeToolType, LocalDate.of(2024, 11, 15), 2);   // Fri, 2 days, no holidays
@@ -44,7 +44,7 @@ class RentalPeriodServiceTest {
 
     @Test
     public void testGetRentalPeriodNoWeekendCharge() {
-        ToolType noWeekendChargeToolType = ToolType.CHAINSAW;
+        ToolType noWeekendChargeToolType = ToolType.Chainsaw;
 
         testRentalPeriodCalculations(3, noWeekendChargeToolType, LocalDate.of(2024, 11, 16), 5);   // Sat, 5 days, no holidays
         testRentalPeriodCalculations(1, noWeekendChargeToolType, LocalDate.of(2024, 11, 15), 2);   // Fri, 2 days, no holidays
@@ -80,9 +80,9 @@ class RentalPeriodServiceTest {
 
     @Test
     public void testGetRentalPeriod_invalidInputs() {
-        assertThrows(IllegalArgumentException.class, () -> rentalPeriodService.getRentalPeriod(ToolType.CHAINSAW, LocalDate.of(2024, 11, 11), -1));
+        assertThrows(IllegalArgumentException.class, () -> rentalPeriodService.getRentalPeriod(ToolType.Chainsaw, LocalDate.of(2024, 11, 11), -1));
         assertThrows(NullPointerException.class, () -> rentalPeriodService.getRentalPeriod(null, LocalDate.of(2024, 11, 11), 2));
-        assertThrows(NullPointerException.class, () -> rentalPeriodService.getRentalPeriod(ToolType.CHAINSAW, null, 1));
+        assertThrows(NullPointerException.class, () -> rentalPeriodService.getRentalPeriod(ToolType.Chainsaw, null, 1));
     }
 
     private void testRentalPeriodCalculations(int expectedChargeDays, ToolType testToolType, LocalDate checkoutDate, int rentalDays) {
