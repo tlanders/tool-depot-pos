@@ -8,7 +8,8 @@ import java.time.LocalDate;
 import java.time.Month;
 
 /**
- * An ExactDayHoliday falls on the same day and month every year.
+ * An ExactDayHoliday falls on the same day and month every year. Appearance modifiers allow for holiday to be
+ * observed on the closest weekday.
  */
 @Getter
 @ToString

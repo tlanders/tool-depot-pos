@@ -70,7 +70,8 @@ public class DayOfWeekAndMonthHoliday implements Holiday {
             }
         } while (currentWeekNumber <= 5);
 
-        return trialDate;
+        // shouldn't ever get here
+        throw new IllegalStateException("Could not find the " + appearanceOrderInMonth + " " + dayOfWeek + " in " + month);
     }
 
 

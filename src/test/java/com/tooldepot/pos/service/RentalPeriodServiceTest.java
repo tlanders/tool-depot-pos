@@ -1,7 +1,6 @@
 package com.tooldepot.pos.service;
 
 import com.tooldepot.pos.domain.RentalPeriod;
-import com.tooldepot.pos.domain.Tool;
 import com.tooldepot.pos.domain.ToolType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -28,34 +27,34 @@ class RentalPeriodServiceTest {
 
     @Test
     public void testGetRentalPeriodNoHolidayCharge() {
-        Tool toolNoHolidayCharge = new Tool("LADW", ToolType.LADDER, "Werner");
+        ToolType noHolidayChargeToolType = ToolType.LADDER;
 
-        testRentalPeriodCalculations(5, toolNoHolidayCharge, LocalDate.of(2024, 11, 16), 5);   // Sat, 5 days, no holidays
-        testRentalPeriodCalculations(2, toolNoHolidayCharge, LocalDate.of(2024, 11, 15), 2);   // Fri, 2 days, no holidays
-        testRentalPeriodCalculations(2, toolNoHolidayCharge, LocalDate.of(2024, 11, 17), 2);   // Sun, 2 days, no holidays
+        testRentalPeriodCalculations(5, noHolidayChargeToolType, LocalDate.of(2024, 11, 16), 5);   // Sat, 5 days, no holidays
+        testRentalPeriodCalculations(2, noHolidayChargeToolType, LocalDate.of(2024, 11, 15), 2);   // Fri, 2 days, no holidays
+        testRentalPeriodCalculations(2, noHolidayChargeToolType, LocalDate.of(2024, 11, 17), 2);   // Sun, 2 days, no holidays
 
         // July 4th is Thu 7/4/2024
-        testRentalPeriodCalculations(2, toolNoHolidayCharge, LocalDate.of(2024, 7, 3), 3);
+        testRentalPeriodCalculations(2, noHolidayChargeToolType, LocalDate.of(2024, 7, 3), 3);
 
         // Labor Day is Mon 9/2/2024
-        testRentalPeriodCalculations(2, toolNoHolidayCharge, LocalDate.of(2024, 9, 1), 3);
+        testRentalPeriodCalculations(2, noHolidayChargeToolType, LocalDate.of(2024, 9, 1), 3);
 
-        testRentalPeriodCalculations(0, toolNoHolidayCharge, LocalDate.of(2024, 11, 1), 0);   // Fri, 0 days, no holidays
+        testRentalPeriodCalculations(0, noHolidayChargeToolType, LocalDate.of(2024, 11, 1), 0);   // Fri, 0 days, no holidays
     }
 
     @Test
     public void testGetRentalPeriodNoWeekendCharge() {
-        Tool toolNoWeekendCharge = new Tool("CHNS", ToolType.CHAINSAW, "Werner");
+        ToolType noWeekendChargeToolType = ToolType.CHAINSAW;
 
-        testRentalPeriodCalculations(3, toolNoWeekendCharge, LocalDate.of(2024, 11, 16), 5);   // Sat, 5 days, no holidays
-        testRentalPeriodCalculations(1, toolNoWeekendCharge, LocalDate.of(2024, 11, 15), 2);   // Fri, 2 days, no holidays
-        testRentalPeriodCalculations(1, toolNoWeekendCharge, LocalDate.of(2024, 11, 17), 2);   // Sun, 2 days, no holidays
-        testRentalPeriodCalculations(0, toolNoWeekendCharge, LocalDate.of(2024, 11, 16), 2);   // Sat, 2 days, no holidays
-        testRentalPeriodCalculations(5, toolNoWeekendCharge, LocalDate.of(2024, 11, 16), 9);   // Sat, 9 days, no holidays
-        testRentalPeriodCalculations(5, toolNoWeekendCharge, LocalDate.of(2024, 11, 17), 7);   // Sun, 7 days, no holidays
-        testRentalPeriodCalculations(21, toolNoWeekendCharge, LocalDate.of(2024, 11, 1), 31);   // Fri, 31 days, no holidays
+        testRentalPeriodCalculations(3, noWeekendChargeToolType, LocalDate.of(2024, 11, 16), 5);   // Sat, 5 days, no holidays
+        testRentalPeriodCalculations(1, noWeekendChargeToolType, LocalDate.of(2024, 11, 15), 2);   // Fri, 2 days, no holidays
+        testRentalPeriodCalculations(1, noWeekendChargeToolType, LocalDate.of(2024, 11, 17), 2);   // Sun, 2 days, no holidays
+        testRentalPeriodCalculations(0, noWeekendChargeToolType, LocalDate.of(2024, 11, 16), 2);   // Sat, 2 days, no holidays
+        testRentalPeriodCalculations(5, noWeekendChargeToolType, LocalDate.of(2024, 11, 16), 9);   // Sat, 9 days, no holidays
+        testRentalPeriodCalculations(5, noWeekendChargeToolType, LocalDate.of(2024, 11, 17), 7);   // Sun, 7 days, no holidays
+        testRentalPeriodCalculations(21, noWeekendChargeToolType, LocalDate.of(2024, 11, 1), 31);   // Fri, 31 days, no holidays
 
-        testRentalPeriodCalculations(0, toolNoWeekendCharge, LocalDate.of(2024, 11, 1), 0);   // Fri, 0 days, no holidays
+        testRentalPeriodCalculations(0, noWeekendChargeToolType, LocalDate.of(2024, 11, 1), 0);   // Fri, 0 days, no holidays
     }
 
     @Test
@@ -79,8 +78,8 @@ class RentalPeriodServiceTest {
                 LocalDate.of(2024, 11, 1), 0);   // Fri, 0 days, no holidays
     }
 
-    private void testRentalPeriodCalculations(int expectedChargeDays, Tool testTool, LocalDate checkoutDate, int rentalDays) {
-        RentalPeriod period = rentalPeriodService.getRentalPeriod(testTool, checkoutDate, rentalDays);
+    private void testRentalPeriodCalculations(int expectedChargeDays, ToolType testToolType, LocalDate checkoutDate, int rentalDays) {
+        RentalPeriod period = rentalPeriodService.getRentalPeriod(testToolType, checkoutDate, rentalDays);
 
         assertAll("rentalPeriod",
                 () -> assertEquals(expectedChargeDays, period.chargeDays()),

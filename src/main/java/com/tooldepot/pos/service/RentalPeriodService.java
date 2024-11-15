@@ -2,7 +2,7 @@ package com.tooldepot.pos.service;
 
 import com.tooldepot.pos.domain.Holiday;
 import com.tooldepot.pos.domain.RentalPeriod;
-import com.tooldepot.pos.domain.Tool;
+import com.tooldepot.pos.domain.ToolType;
 import com.tooldepot.pos.repo.HolidayRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +12,19 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 
+/**
+ * Service to calculate rental period and charge days for a tool.
+ */
 @Service
 @Slf4j
 public class RentalPeriodService {
     @Autowired
     private HolidayRepo holidayRepo;
 
-    public RentalPeriod getRentalPeriod(Tool tool, LocalDate checkoutDate, int rentalDays) {
-        log.debug("getRentalPeriod(tool={}, checkoutDate={}, rentalDays={})", tool, checkoutDate, rentalDays);
-        return getRentalPeriod(checkoutDate, rentalDays, tool.toolType().isWeekdayCharge(),
-                tool.toolType().isWeekendCharge(), tool.toolType().isHolidayCharge());
+    public RentalPeriod getRentalPeriod(ToolType toolType, LocalDate checkoutDate, int rentalDays) {
+        log.debug("getRentalPeriod(toolType={}, checkoutDate={}, rentalDays={})", toolType, checkoutDate, rentalDays);
+        return getRentalPeriod(checkoutDate, rentalDays, toolType.isWeekdayCharge(),
+                toolType.isWeekendCharge(), toolType.isHolidayCharge());
     }
 
     protected RentalPeriod getRentalPeriod(LocalDate checkoutDate, int rentalDays, boolean isWeekdayCharge,
