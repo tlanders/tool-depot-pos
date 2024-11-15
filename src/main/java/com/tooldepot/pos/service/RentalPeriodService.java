@@ -5,7 +5,6 @@ import com.tooldepot.pos.domain.RentalPeriod;
 import com.tooldepot.pos.domain.ToolType;
 import com.tooldepot.pos.repo.HolidayRepo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -26,6 +25,12 @@ public class RentalPeriodService {
 
     public RentalPeriod getRentalPeriod(ToolType toolType, LocalDate checkoutDate, int rentalDays) {
         log.debug("getRentalPeriod(toolType={}, checkoutDate={}, rentalDays={})", toolType, checkoutDate, rentalDays);
+        Objects.requireNonNull(toolType, "toolType is required");
+        Objects.requireNonNull(toolType, "checkoutDate is required");
+        if(rentalDays < 0) {
+            throw new IllegalArgumentException("rentalDays must be >= 0");
+        }
+
         return getRentalPeriod(checkoutDate, rentalDays, toolType.isWeekdayCharge(),
                 toolType.isWeekendCharge(), toolType.isHolidayCharge());
     }

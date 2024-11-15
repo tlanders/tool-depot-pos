@@ -7,6 +7,32 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BigDecimalUtilTest {
     @Test
+    void testNewBD_invalidInputs() {
+        assertThrows(NullPointerException.class, () -> newBD(null));
+        assertThrows(IllegalArgumentException.class, () -> newBD(""));
+        assertThrows(IllegalArgumentException.class, () -> newBD(" "));
+        assertThrows(IllegalArgumentException.class, () -> newBD("  "));
+        assertThrows(IllegalArgumentException.class, () -> newBD("1.2.3"));
+        assertThrows(IllegalArgumentException.class, () -> newBD("A"));
+    }
+
+    @Test
+    void testMultiply_invalidInputs() {
+        assertThrows(NullPointerException.class, () -> multiply(null, 1, 2));
+        assertThrows(NullPointerException.class, () -> multiply(null, 1, -2));
+
+        assertThrows(NullPointerException.class, () -> multiply(newBD("1"), null, 2));
+        assertThrows(NullPointerException.class, () -> multiply(null, newBD("-1"), 2));
+        assertThrows(IllegalArgumentException.class, () -> multiply(newBD("1"), newBD("-1"), -1));
+    }
+
+    @Test
+    void testDivide_invalidInputs() {
+        assertThrows(NullPointerException.class, () -> divide(1, null, 2));
+        assertThrows(IllegalArgumentException.class, () -> divide(1, newBD(1), -2));
+    }
+
+    @Test
     void testMultiplyBDbyInt() {
         assertEquals(newBD("6.00"), multiply(newBD("2.00"), 3, 2));
         assertEquals(newBD("7.50"), multiply(newBD("2.50"), 3, 2));

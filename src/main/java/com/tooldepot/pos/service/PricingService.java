@@ -16,8 +16,20 @@ import static com.tooldepot.pos.util.BigDecimalUtil.*;
 @Slf4j
 public class PricingService {
 
-    public RentalCharge calculateRentalCharges(BigDecimal dailyRate, int chargeDays, int discountPercent) {
+    public RentalCharge calculateRentalCharges(BigDecimal dailyRate, int chargeDays, int discountPercent)
+            throws PosServiceException
+    {
         Objects.requireNonNull(dailyRate, "dailyRate is required");
+        if(discountPercent < 0 || discountPercent > 100) {
+            throw new PosServiceException(PosServiceException.Error.INVALID_DISCOUNT_PERCENTAGE,
+                    "Discount percent must be between 0 and 100");
+        }
+        if(chargeDays < 0) {
+            throw new IllegalArgumentException("chargeDays must be >= 0");
+        }
+        if(dailyRate.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("dailyRate must be >= 0");
+        }
 
         log.debug("calculateRentalCharge dailyRate={}, chargeDays={}, discountPercent={}", dailyRate, chargeDays, discountPercent);
 

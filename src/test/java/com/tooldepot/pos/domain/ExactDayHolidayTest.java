@@ -5,13 +5,26 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.Month;
 
+import static com.tooldepot.pos.domain.Holiday.AppearanceModifier.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ExactDayHolidayTest {
 
     @Test
+    void testIsObservedHolidayDate_invalidInputs() {
+        ExactDayHoliday holiday = new ExactDayHoliday("July 4th", Month.JULY, 4, CLOSEST_WEEKDAY);
+        assertThrows(NullPointerException.class, () -> holiday.isObservedHolidayDate(null));
+
+        assertThrows(NullPointerException.class, () -> new ExactDayHoliday(null, Month.SEPTEMBER, 2, CLOSEST_WEEKDAY));
+        assertThrows(NullPointerException.class, () -> new ExactDayHoliday("name", null, 2, CLOSEST_WEEKDAY));
+        assertThrows(NullPointerException.class, () -> new ExactDayHoliday("name", Month.JULY, 2, null));
+        assertThrows(IllegalArgumentException.class, () -> new ExactDayHoliday("name", Month.JULY, 0, NONE));
+        assertThrows(IllegalArgumentException.class, () -> new ExactDayHoliday("name", Month.JULY, 32, NONE));
+    }
+
+    @Test
     void testIsObservedHolidayDate() {
-        ExactDayHoliday holiday = new ExactDayHoliday("July 4th", Month.JULY, 4, Holiday.AppearanceModifier.CLOSEST_WEEKDAY);
+        ExactDayHoliday holiday = new ExactDayHoliday("July 4th", Month.JULY, 4, CLOSEST_WEEKDAY);
 
         assertTrue(holiday.isObservedHolidayDate(LocalDate.of(2015, Month.JULY, 3)));
         assertTrue(holiday.isObservedHolidayDate(LocalDate.of(2016, Month.JULY, 4)));

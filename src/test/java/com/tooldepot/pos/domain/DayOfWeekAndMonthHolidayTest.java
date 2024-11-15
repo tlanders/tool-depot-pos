@@ -8,17 +8,29 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 
+import static com.tooldepot.pos.domain.Holiday.AppearanceOrderInMonth.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j
 class DayOfWeekAndMonthHolidayTest {
+    @Test
+    void testIsObservedHoliday_invalidInputs() {
+        DayOfWeekAndMonthHoliday dayOfWeekAndMonthHoliday = new DayOfWeekAndMonthHoliday(
+                "Labor Day", Month.SEPTEMBER, DayOfWeek.MONDAY, FIRST);
 
+        assertThrows(NullPointerException.class, () -> dayOfWeekAndMonthHoliday.isObservedHolidayDate(null));
+
+        assertThrows(NullPointerException.class, () -> new DayOfWeekAndMonthHoliday(null, Month.SEPTEMBER, DayOfWeek.MONDAY, FIRST));
+        assertThrows(NullPointerException.class, () -> new DayOfWeekAndMonthHoliday("name", null, DayOfWeek.MONDAY, FIRST));
+        assertThrows(NullPointerException.class, () -> new DayOfWeekAndMonthHoliday("name", Month.SEPTEMBER, null, FIRST));
+        assertThrows(NullPointerException.class, () -> new DayOfWeekAndMonthHoliday("name", Month.SEPTEMBER, DayOfWeek.MONDAY, null));
+    }
 
     @Test
-    void testIsHoliday() {
+    void testIsObservedHoliday() {
         DayOfWeekAndMonthHoliday dayOfWeekAndMonthHoliday = new DayOfWeekAndMonthHoliday(
-                "Labor Day", Month.SEPTEMBER, DayOfWeek.MONDAY, Holiday.AppearanceOrderInMonth.FIRST);
+                "Labor Day", Month.SEPTEMBER, DayOfWeek.MONDAY, FIRST);
 
         assertTrue(dayOfWeekAndMonthHoliday.isObservedHolidayDate(LocalDate.of(2025, 9, 1)));
         assertTrue(dayOfWeekAndMonthHoliday.isObservedHolidayDate(LocalDate.of(2024, 9, 2)));
@@ -37,7 +49,7 @@ class DayOfWeekAndMonthHolidayTest {
     @Test
     void testCalculateObservedDateFirstInMonth() {
         DayOfWeekAndMonthHoliday dayOfWeekAndMonthHoliday = new DayOfWeekAndMonthHoliday(
-                "Labor Day", Month.SEPTEMBER, DayOfWeek.MONDAY, Holiday.AppearanceOrderInMonth.FIRST);
+                "Labor Day", Month.SEPTEMBER, DayOfWeek.MONDAY, FIRST);
 
         assertEquals(LocalDate.of(2025, 9, 1), dayOfWeekAndMonthHoliday.calculateObservedDate(2025));
         assertEquals(LocalDate.of(2024, 9, 2), dayOfWeekAndMonthHoliday.calculateObservedDate(2024));

@@ -78,6 +78,13 @@ class RentalPeriodServiceTest {
                 LocalDate.of(2024, 11, 1), 0);   // Fri, 0 days, no holidays
     }
 
+    @Test
+    public void testGetRentalPeriod_invalidInputs() {
+        assertThrows(IllegalArgumentException.class, () -> rentalPeriodService.getRentalPeriod(ToolType.CHAINSAW, LocalDate.of(2024, 11, 11), -1));
+        assertThrows(NullPointerException.class, () -> rentalPeriodService.getRentalPeriod(null, LocalDate.of(2024, 11, 11), 2));
+        assertThrows(NullPointerException.class, () -> rentalPeriodService.getRentalPeriod(ToolType.CHAINSAW, null, 1));
+    }
+
     private void testRentalPeriodCalculations(int expectedChargeDays, ToolType testToolType, LocalDate checkoutDate, int rentalDays) {
         RentalPeriod period = rentalPeriodService.getRentalPeriod(testToolType, checkoutDate, rentalDays);
 

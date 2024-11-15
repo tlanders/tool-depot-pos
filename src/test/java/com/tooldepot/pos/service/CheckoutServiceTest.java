@@ -8,11 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 
-import static com.tooldepot.pos.util.BigDecimalUtil.newBD;
+import static com.tooldepot.pos.util.BigDecimalUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -21,18 +19,20 @@ public class CheckoutServiceTest {
     @Autowired
     private CheckoutService checkoutService;
 
-    @Autowired
-    private ToolService toolService;
-
     @Test
     public void testValidCheckout() throws PosServiceException {
         log.info("Testing valid checkout");
 
         Tool testTool = new Tool("LADW", ToolType.LADDER, "Werner");
 
-        int rentalDays = 3;
-        int discountPercent = 0;
-        LocalDate checkoutDate = LocalDate.now();
+        testValidCheckout(testTool, 3, 0, LocalDate.now());
+
+        checkoutService.checkout("LADW", 1, 0, LocalDate.now());
+        checkoutService.checkout("LADW", 3, 10, LocalDate.now());
+        checkoutService.checkout("LADW", 7, 53, LocalDate.now());
+    }
+
+    private void testValidCheckout(Tool testTool, int rentalDays, int discountPercent, LocalDate checkoutDate) throws PosServiceException {
         RentalTransaction rental = checkoutService.checkout(testTool.toolCode(), rentalDays, discountPercent, checkoutDate);
         assertAll("rental",
                 () -> assertNotNull(rental),
@@ -45,17 +45,9 @@ public class CheckoutServiceTest {
                 () -> assertEquals(checkoutDate.plusDays(rentalDays), rental.dueDate()),
                 () -> assertEquals(testTool.toolType().getDailyCharge(), rental.dailyRentalCharge()),
                 () -> assertEquals(rentalDays, rental.chargeDays()),
-                () -> assertEquals(multiplyChargeByDays(testTool.toolType().getDailyCharge(), rentalDays), rental.preDiscountCharge()),
+                () -> assertEquals(multiply(testTool.toolType().getDailyCharge(), rentalDays, 2), rental.preDiscountCharge()),
                 () -> assertEquals(discountPercent, rental.discountPercent())
         );
-
-        checkoutService.checkout("LADW", 1, 0, LocalDate.now());
-        checkoutService.checkout("LADW", 3, 10, LocalDate.now());
-        checkoutService.checkout("LADW", 7, 53, LocalDate.now());
-    }
-
-    private static BigDecimal multiplyChargeByDays(BigDecimal amount, int days) {
-        return amount.multiply(newBD(days)).setScale(2, RoundingMode.HALF_UP);
     }
 
     @Test
@@ -71,21 +63,21 @@ public class CheckoutServiceTest {
                                        LocalDate checkoutDate, PosServiceException.Error expectedError) {
         try {
             checkoutService.checkout(toolCode, rentalDays, discount, checkoutDate);
-            fail("Should not have thrown PosServiceException");
+            fail("Should have thrown PosServiceException");
         } catch (PosServiceException e) {
             assertEquals(expectedError, e.getErrorCode(), "Error code should be " + expectedError);
         }
     }
 
     @Test
-    public void testValidCheckout_invalidToolCode() {
-        log.info("Testing checkout invalid tool code");
+    public void testCheckout_invalidToolCode() {
+        log.info("Testing checkout with invalid tool code");
         checkoutWithException("ABCD", 1, 0, LocalDate.now(), PosServiceException.Error.INVALID_TOOL_CODE);
     }
 
     @Test
-    public void testValidCheckout_invalidDiscount() {
-        log.info("Testing checkout invalid discount");
+    public void testCheckout_invalidDiscount() {
+        log.info("Testing checkout with invalid discount");
 
         checkoutWithException("JAKR", 2, -1, LocalDate.now(), PosServiceException.Error.INVALID_DISCOUNT_PERCENTAGE);
         checkoutWithException("JAKR", 2, 101, LocalDate.now(), PosServiceException.Error.INVALID_DISCOUNT_PERCENTAGE);

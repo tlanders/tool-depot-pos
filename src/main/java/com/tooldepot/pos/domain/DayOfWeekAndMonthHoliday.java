@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Objects;
 
 /**
  * Falls on the same day of the week and the same appearance order in the month (e.g. 2nd Tue of August).
@@ -22,6 +23,11 @@ public class DayOfWeekAndMonthHoliday implements Holiday {
 
     public DayOfWeekAndMonthHoliday(String name, Month month, DayOfWeek dayOfWeek,
                                     AppearanceOrderInMonth appearanceOrderInMonth) {
+        Objects.requireNonNull(name, "name is required");
+        Objects.requireNonNull(month, "month is required");
+        Objects.requireNonNull(dayOfWeek, "dayOfWeek is required");
+        Objects.requireNonNull(appearanceOrderInMonth, "appearanceOrderInMonth is required");
+
         this.name = name;
         this.month = month;
         this.dayOfWeek = dayOfWeek;
@@ -30,6 +36,7 @@ public class DayOfWeekAndMonthHoliday implements Holiday {
 
     @Override
     public boolean isObservedHolidayDate(LocalDate date) {
+        Objects.requireNonNull(date, "date is required");
         return date.equals(calculateObservedDate(date.getYear()));
     }
 

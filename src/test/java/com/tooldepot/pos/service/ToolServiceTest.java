@@ -39,7 +39,6 @@ public class ToolServiceTest {
     @Test
     public void testGetTool_invalidToolCode() {
         Optional<Tool> tool = toolService.getTool("ABCD");
-        assertThat(tool)
-                .isEmpty();
+        assertThat(tool).isEmpty();
     }
 }

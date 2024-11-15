@@ -18,14 +18,27 @@ public class PricingServiceTest {
     private PricingService pricingService;
 
     @Test
-    public void testCalculateRentalCharges() {
+    public void testCalculateRentalCharges() throws Exception {
         testRentalCharges(newBD("5.97"), newBD("0.00"), newBD("5.97"), newBD("1.99"), 3, 0);
         testRentalCharges(newBD("5.97"), newBD("0.60"), newBD("5.37"), newBD("1.99"), 3, 10);
         testRentalCharges(newBD("3.98"), newBD("0.00"), newBD("3.98"), newBD("1.99"), 2, 0);
+        testRentalCharges(newBD("3.98"), newBD("3.98"), newBD("0.00"), newBD("1.99"), 2, 100);
+        testRentalCharges(newBD("3.98"), newBD("1.99"), newBD("1.99"), newBD("1.99"), 2, 50);
+        testRentalCharges(newBD("199.00"), newBD("1.99"), newBD("199.00").subtract(newBD("1.99")),
+                newBD("1.99"), 100, 1);
+        testRentalCharges(newBD("0.00"), newBD("0.00"), newBD("0.00"), newBD("0.00"), 5, 50);
+    }
+
+    @Test
+    public void testCalculateRentalCharges_invalidInputs() {
+        assertThrows(NullPointerException.class, () -> pricingService.calculateRentalCharges(null, 3, 0));
+        assertThrows(IllegalArgumentException.class, () -> pricingService.calculateRentalCharges(newBD("1.99"), -1, 0));
+        assertThrows(PosServiceException.class, () -> pricingService.calculateRentalCharges(newBD("1.99"), 3, -1));
+        assertThrows(IllegalArgumentException.class, () -> pricingService.calculateRentalCharges(newBD("-1.99"), 3, 0));
     }
 
     private void testRentalCharges(BigDecimal expectedPreDiscountCharge, BigDecimal expectedDiscountAmount, BigDecimal expectedFinalCharge,
-                                   BigDecimal rentalRate, int chargeDays, int discountPercent) {
+                                   BigDecimal rentalRate, int chargeDays, int discountPercent) throws Exception {
         RentalCharge rentalCharge = pricingService.calculateRentalCharges(rentalRate, chargeDays, discountPercent);
 
         assertEquals(expectedPreDiscountCharge, rentalCharge.preDiscountCharge());
