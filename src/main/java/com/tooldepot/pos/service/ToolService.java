@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -23,6 +24,7 @@ public class ToolService {
     }
 
     public Optional<Tool> getTool(String toolCode) {
+        Objects.requireNonNull(toolCode, "toolCode is required");
         return toolRepo.getTool(toolCode);
     }
 }

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Slf4j
@@ -37,8 +38,10 @@ public class ToolServiceTest {
     }
 
     @Test
-    public void testGetTool_invalidToolCode() {
-        Optional<Tool> tool = toolService.getTool("ABCD");
-        assertThat(tool).isEmpty();
+    public void testGetTool_invalidInputs() {
+        assertThat(toolService.getTool("ABCD")).isEmpty();
+        assertThat(toolService.getTool("")).isEmpty();
+
+        assertThrows(NullPointerException.class, () -> toolService.getTool(null));
     }
 }
