@@ -28,23 +28,33 @@ public class CheckoutServiceTest {
     @MockBean
     private RentalPeriodService rentalPeriodService;
 
-//    @MockBean
-//    private PricingService pricingService;
-
     @Test
     public void testValidCheckout() throws PosServiceException {
         log.info("Testing valid checkout");
 
+        // Ladders don't charge on holidays
         testValidCheckout(new Tool("LADW", ToolType.LADDER, "Werner"),
-                new RentalPeriod(3, 3, LocalDate.now(), LocalDate.now().plusDays(3)),
+                new RentalPeriod(3, 3,
+                        LocalDate.of(2024, 11, 1),
+                        LocalDate.of(2024, 11, 1).plusDays(3)),
                 0);
         testValidCheckout(new Tool("LADW", ToolType.LADDER, "Werner"),
-                new RentalPeriod(3, 3, LocalDate.now(), LocalDate.now().plusDays(3)),
-                10);
+                new RentalPeriod(6, 5,
+                        LocalDate.of(2024, 7, 1),
+                        LocalDate.of(2024, 7, 1).plusDays(6)),
+                        10);
 
-//        checkoutService.checkout(expectedTool.toolCode(), 1, 0, LocalDate.now());
-//        checkoutService.checkout(expectedTool.toolCode(), 3, 10, LocalDate.now());
-//        checkoutService.checkout(expectedTool.toolCode(), 7, 53, LocalDate.now());
+        // Jackhammers don't charge on weekends or holidays
+        testValidCheckout(new Tool("JCKB", ToolType.JACKHAMMER, "Jackhammer Brand"),
+                new RentalPeriod(10, 7,
+                        LocalDate.of(2024, 11, 20),
+                        LocalDate.of(2024, 11, 20).plusDays(10)),
+                        33);
+        testValidCheckout(new Tool("JCKB", ToolType.JACKHAMMER, "Jackhammer Brand"),
+                new RentalPeriod(10, 6,
+                        LocalDate.of(2024, 11, 9),
+                        LocalDate.of(2024, 11, 9).plusDays(10)),
+                        23);
     }
 
     private void testValidCheckout(Tool expectedTool, RentalPeriod expectedRentalPeriod, int discountPercent) throws PosServiceException {
@@ -54,7 +64,7 @@ public class CheckoutServiceTest {
 
         RentalTransaction rental = checkoutService.checkout(expectedTool.toolCode(), expectedRentalPeriod.rentalDays(),
                 discountPercent, expectedRentalPeriod.checkoutDate());
-        BigDecimal expectedPreDiscountCharge = multiply(expectedTool.toolType().getDailyCharge(), expectedRentalPeriod.rentalDays(), 2);
+        BigDecimal expectedPreDiscountCharge = multiply(expectedTool.toolType().getDailyCharge(), expectedRentalPeriod.chargeDays(), 2);
         BigDecimal expectedDiscountAmount = multiply(expectedPreDiscountCharge,
                 divide(discountPercent, BD_100, 2), 2);
         BigDecimal expectedFinalCharge = expectedPreDiscountCharge.subtract(expectedDiscountAmount);
@@ -94,6 +104,14 @@ public class CheckoutServiceTest {
         } catch (PosServiceException e) {
             assertEquals(expectedError, e.getErrorCode(), "Error code should be " + expectedError);
         }
+    }
+
+    @Test
+    public void testCheckout_invalidRentaldays() {
+        log.info("Testing checkout with invalid rental days");
+        checkoutWithException("JAKR", 0, 0, LocalDate.now(), PosServiceException.Error.INVALID_RENTAL_DAYS);
+        checkoutWithException("JAKR", -1, 10, LocalDate.now(), PosServiceException.Error.INVALID_RENTAL_DAYS);
+        checkoutWithException("JAKR", -99, 20, LocalDate.now(), PosServiceException.Error.INVALID_RENTAL_DAYS);
     }
 
     @Test
