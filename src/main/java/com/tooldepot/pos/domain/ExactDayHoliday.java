@@ -26,7 +26,7 @@ public class ExactDayHoliday implements Holiday {
     }
 
     @Override
-    public boolean isHoliday(LocalDate date) {
+    public boolean isObservedHolidayDate(LocalDate date) {
         if(appearanceModifier == AppearanceModifier.CLOSEST_WEEKDAY) {
             LocalDate holidayDate = LocalDate.of(date.getYear(), month, dayOfMonth);
             LocalDate observedDate = holidayDate;

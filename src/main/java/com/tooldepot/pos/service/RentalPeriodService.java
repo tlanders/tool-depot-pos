@@ -46,7 +46,7 @@ public class RentalPeriodService {
     }
 
     private static boolean isHoliday(List<Holiday> holidays, LocalDate date) {
-        return holidays.stream().anyMatch(holiday -> holiday.isHoliday(date));
+        return holidays.stream().anyMatch(holiday -> holiday.isObservedHolidayDate(date));
     }
 
     private static boolean isWeekend(LocalDate date) {

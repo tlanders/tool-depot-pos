@@ -1,6 +1,6 @@
 package com.tooldepot.pos.repo;
 
-import com.tooldepot.pos.domain.DayOfWeekHoliday;
+import com.tooldepot.pos.domain.DayOfWeekAndMonthHoliday;
 import com.tooldepot.pos.domain.ExactDayHoliday;
 import com.tooldepot.pos.domain.Holiday;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class HolidayRepo {
 
     public HolidayRepo() {
         holidays.add(new ExactDayHoliday("Independence Day", Month.JULY, 4, CLOSEST_WEEKDAY));
-        holidays.add(new DayOfWeekHoliday("Labor Day", Month.SEPTEMBER, DayOfWeek.MONDAY, FIRST));
+        holidays.add(new DayOfWeekAndMonthHoliday("Labor Day", Month.SEPTEMBER, DayOfWeek.MONDAY, FIRST));
     }
 
     public List<Holiday> findAllHolidays() {
