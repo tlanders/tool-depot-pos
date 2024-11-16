@@ -50,7 +50,7 @@ public class RentalApiController {
 
     @Data
     @NoArgsConstructor
-    public static class CheckoutResponse implements Serializable {
+    public static class CheckoutResponse extends BaseApiResponse implements Serializable {
         private Tool tool;
         private int rentalDays;
         @JsonFormat(pattern = "MM/dd/yy")
@@ -63,8 +63,6 @@ public class RentalApiController {
         private int discountPercent;
         private BigDecimal discountAmount;
         private BigDecimal finalCharge;
-        private int resultCode;
-        private String message;
 
         public CheckoutResponse(int resultCode, String message) {
             this.resultCode = resultCode;
