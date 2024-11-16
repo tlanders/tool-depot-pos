@@ -35,7 +35,7 @@ public class CheckoutService {
             throw new PosServiceException(PosServiceException.Error.INVALID_RENTAL_DAYS, "Rental days must be greater than 0");
         }
         if(discountPercent < 0 || discountPercent > 100) {
-            throw new PosServiceException(PosServiceException.Error.INVALID_DISCOUNT_PERCENTAGE,
+            throw new PosServiceException(PosServiceException.Error.INVALID_DISCOUNT_PERCENT,
                     "Discount percent must be between 0 and 100");
         }
 

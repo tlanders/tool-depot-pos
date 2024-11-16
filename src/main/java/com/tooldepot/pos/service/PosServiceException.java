@@ -18,7 +18,7 @@ public class PosServiceException extends Exception {
 
     @Getter
     public enum Error {
-        INVALID_DISCOUNT_PERCENTAGE(1),
+        INVALID_DISCOUNT_PERCENT(1),
         INVALID_RENTAL_DAYS(2),
         INVALID_TOOL_CODE(3);
 

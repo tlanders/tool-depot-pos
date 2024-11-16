@@ -1,7 +1,7 @@
 package com.tooldepot.pos.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tooldepot.pos.api.RentalApiController.CheckoutRequest;
+import com.tooldepot.pos.api.RentalApiController.CheckoutRequestModel;
 import com.tooldepot.pos.service.PosServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ public class RentalApiControllerTest {
     public void testValidCheckout() throws Exception {
         log.info("testValidCheckout");
 
-        CheckoutRequest request = new CheckoutRequest("LADW", 3, 0,
+        CheckoutRequestModel request = new CheckoutRequestModel("LADW", 3, 0,
                 LocalDate.of(2024, 11, 1));
 
         mockMvc.perform(post("/api/rentals")
@@ -75,15 +75,15 @@ public class RentalApiControllerTest {
 
         testInvalidCheckout("LADW", 4, -1,
                 LocalDate.of(2024, 11, 1),
-                PosServiceException.Error.INVALID_DISCOUNT_PERCENTAGE.getErrorCode());
+                PosServiceException.Error.INVALID_DISCOUNT_PERCENT.getErrorCode());
         testInvalidCheckout("LADW", 5, 101,
                 LocalDate.of(2024, 11, 1),
-                PosServiceException.Error.INVALID_DISCOUNT_PERCENTAGE.getErrorCode());
+                PosServiceException.Error.INVALID_DISCOUNT_PERCENT.getErrorCode());
     }
 
     private void testInvalidCheckout(String toolCode, int rentalDays, int discountPercent,
                                      LocalDate checkoutDate, int expectedErrorCode) throws Exception {
-        CheckoutRequest request = new CheckoutRequest(toolCode, rentalDays, discountPercent,
+        CheckoutRequestModel request = new CheckoutRequestModel(toolCode, rentalDays, discountPercent,
                 checkoutDate);
 
         mockMvc.perform(post("/api/rentals")

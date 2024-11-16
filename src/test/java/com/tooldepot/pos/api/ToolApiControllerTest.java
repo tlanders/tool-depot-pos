@@ -31,7 +31,7 @@ public class ToolApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(4)));
+                .andExpect(jsonPath("$.tools", hasSize(4)));
     }
 
     @Test
