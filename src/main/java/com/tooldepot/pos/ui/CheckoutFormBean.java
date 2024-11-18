@@ -2,9 +2,6 @@ package com.tooldepot.pos.ui;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDate;
 
 @Data
 public class CheckoutFormBean {
