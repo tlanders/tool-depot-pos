@@ -2,11 +2,14 @@ package com.tooldepot.pos.ui;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
@@ -32,11 +35,23 @@ public class CheckoutController {
         log.debug("POST /ui/checkout, bean={}", checkoutFormBean);
 
         LocalDate checkoutDate = null;
+        Integer rentalDays = null;
+        Integer discountPercent = null;
         if(!errors.hasErrors()) {
             try {
                 checkoutDate = LocalDate.parse(checkoutFormBean.getCheckoutDate(), dateFormatter);
             } catch (Exception e) {
                 errors.rejectValue("checkoutDate", "checkoutDate.invalid", "Please enter a valid checkout date (MM/dd/yy)");
+            }
+            try {
+                rentalDays = Integer.valueOf(checkoutFormBean.getRentalDays());
+            } catch (Exception e) {
+                errors.rejectValue("rentalDays", "rentalDays.invalid", "Rental days must be 1 or greater");
+            }
+            try {
+                discountPercent = Integer.valueOf(checkoutFormBean.getDiscountPercent());
+            } catch (Exception e) {
+                errors.rejectValue("discountPercent", "discountPercent.invalid", "Discount percent must be in the range 0-100");
             }
         }
 
@@ -47,30 +62,32 @@ public class CheckoutController {
 
         try {
             CheckoutRequestModel checkoutRequestModel = new CheckoutRequestModel(
-                    checkoutFormBean.getToolCode(), checkoutFormBean.getRentalDays(),
-                    checkoutFormBean.getDiscountPercent(), checkoutDate);
+                    checkoutFormBean.getToolCode(), rentalDays,
+                    discountPercent, checkoutDate);
 
-            CheckoutResponseModel checkoutResponse = WebClient.create("http://localhost:8100")
-                    .post()
-                    .uri("/api/rentals")
-                    .bodyValue(checkoutRequestModel)
-                    .retrieve()
-                    .onStatus(HttpStatusCode::is5xxServerError,
-                            response -> response.bodyToMono(String.class).map(body -> new RuntimeException(body)))
-                    .bodyToMono(CheckoutResponseModel.class)
-                    .block();
+            RestTemplate restTemplate = new RestTemplate();
+            String rentalURL = "http://localhost:8100/api/rentals";
+            ResponseEntity<CheckoutResponseModel> responseEntity = restTemplate.postForEntity(rentalURL,
+                    new HttpEntity<>(checkoutRequestModel),
+                    CheckoutResponseModel.class);
 
-            if(checkoutResponse.getResultCode() == 0) {
-                return new ModelAndView("ui/agreement", "checkoutResponse", checkoutResponse);
-            } else if(checkoutResponse.getResultCode() == 1) {
-                errors.rejectValue("toolCode", "toolCode.notFound", "Tool not found");
-            } else if(checkoutResponse.getResultCode() == 2) {
-                errors.rejectValue("rentalDays", "rentalDays.invalid", "Rental days must be >= 1");
-            } else if(checkoutResponse.getResultCode() == 3) {
-                errors.rejectValue("discountPercent", "discountPercent.invalid", "Discount percent must be >= 0");
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                return new ModelAndView("ui/agreement", "checkoutResponse", responseEntity.getBody());
+            }
+        } catch(HttpStatusCodeException httpStatusCodeException) {
+            log.warn("Exception checking out", httpStatusCodeException);
+            if(httpStatusCodeException.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
+                CheckoutResponseModel checkoutResponse = httpStatusCodeException.getResponseBodyAs(CheckoutResponseModel.class);
+                if (checkoutResponse.getResultCode() == 1) {
+                    errors.rejectValue("discountPercent", "discountPercent.invalid", "Discount percent must be in the range 0-100");
+                } else if (checkoutResponse.getResultCode() == 2) {
+                    errors.rejectValue("rentalDays", "rentalDays.invalid", "Rental days must be 1 or greater");
+                } else if (checkoutResponse.getResultCode() == 3) {
+                    errors.rejectValue("toolCode", "toolCode.notFound", "Tool not found");
+                }
             }
         } catch(Exception e) {
-            log.error("Error checking out", e);
+            log.error("Exception checking out", e);
         }
 
         return new ModelAndView("ui/checkout", "checkoutFormBean", checkoutFormBean);
