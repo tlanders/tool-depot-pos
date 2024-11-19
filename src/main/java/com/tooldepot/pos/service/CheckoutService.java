@@ -4,6 +4,7 @@ import com.tooldepot.pos.domain.RentalCharge;
 import com.tooldepot.pos.domain.RentalPeriod;
 import com.tooldepot.pos.domain.RentalTransaction;
 import com.tooldepot.pos.domain.Tool;
+import com.tooldepot.pos.repo.RentalTransactionRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +19,14 @@ public class CheckoutService {
     private final ToolService toolService;
     private final RentalPeriodService rentalPeriodService;
     private final PricingService pricingService;
+    private final RentalTransactionRepo rentalTransactionRepo;
 
-    public CheckoutService(ToolService toolService, RentalPeriodService rentalPeriodService, PricingService pricingService) {
+    public CheckoutService(ToolService toolService, RentalPeriodService rentalPeriodService,
+                           PricingService pricingService, RentalTransactionRepo rentalTransactionRepo) {
         this.toolService = toolService;
         this.rentalPeriodService = rentalPeriodService;
         this.pricingService = pricingService;
+        this.rentalTransactionRepo = rentalTransactionRepo;
     }
 
     public RentalTransaction checkout(String toolCode, int rentalDays,
@@ -49,7 +53,7 @@ public class CheckoutService {
         RentalCharge rentalCharge = pricingService.calculateRentalCharges(tool.toolType().getDailyCharge(),
                 rentalPeriod.chargeDays(), discountPercent);
 
-        return new RentalTransaction(
+        RentalTransaction txn = new RentalTransaction(
                 tool,
                 rentalDays,
                 checkoutDate,
@@ -60,5 +64,7 @@ public class CheckoutService {
                 discountPercent,
                 rentalCharge.discountAmount(),
                 rentalCharge.preDiscountCharge().subtract(rentalCharge.discountAmount()));
+
+        return rentalTransactionRepo.save(txn);
     }
 }
