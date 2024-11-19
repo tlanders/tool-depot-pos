@@ -48,7 +48,7 @@
                 <p>Rental Days:</p>
             </div>
             <div class="col-9 text-start">
-                <p th:text="${checkoutResponse.rentalDays}"></p>
+                <p th:text="${#numbers.formatInteger(checkoutResponse.rentalDays,1,'DEFAULT')}"></p>
             </div>
         </div>
 
@@ -84,7 +84,7 @@
                 <p>Charge Days:</p>
             </div>
             <div class="col-9 text-start">
-                <p th:text="${checkoutResponse.chargeDays}"></p>
+                <p th:text="${#numbers.formatInteger(checkoutResponse.chargeDays,1,'DEFAULT')}"></p>
             </div>
         </div>
 
