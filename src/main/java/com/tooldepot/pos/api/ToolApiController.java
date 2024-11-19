@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +37,14 @@ public class ToolApiController {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         List<ToolModel> responseTools = tools.stream()
-                .map(tool -> modelMapper.map(tool, ToolModel.class))
+                .map(tool -> {
+                    ToolModel toolModel = modelMapper.map(tool, ToolModel.class);
+                    toolModel.setDailyCharge(tool.toolType().getDailyCharge());
+                    toolModel.setWeekdayCharge(tool.toolType().isWeekdayCharge());
+                    toolModel.setWeekendCharge(tool.toolType().isWeekendCharge());
+                    toolModel.setHolidayCharge(tool.toolType().isHolidayCharge());
+                    return toolModel;
+                })
                 .toList();
 
         return ResponseEntity.ok(new FindToolsResponseModel(responseTools));
@@ -50,8 +58,13 @@ public class ToolApiController {
             ModelMapper modelMapper = new ModelMapper().registerModule(new RecordModule());
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
+            Tool tool = optionalTool.get();
             ToolResponseModel toolResponseModel = modelMapper.map(
-                    optionalTool.get(), ToolResponseModel.class);
+                    tool, ToolResponseModel.class);
+            toolResponseModel.setDailyCharge(tool.toolType().getDailyCharge());
+            toolResponseModel.setHolidayCharge(tool.toolType().isHolidayCharge());
+            toolResponseModel.setWeekdayCharge(tool.toolType().isWeekdayCharge());
+            toolResponseModel.setWeekendCharge(tool.toolType().isWeekendCharge());
             toolResponseModel.setMessage("success");
 
             return ResponseEntity.ok(toolResponseModel);
@@ -78,6 +91,10 @@ public class ToolApiController {
         private String toolCode;
         private ToolType toolType;
         private String brand;
+        private BigDecimal dailyCharge;
+        private boolean weekdayCharge;
+        private boolean weekendCharge;
+        private boolean holidayCharge;
     }
 
     @Data
@@ -85,5 +102,9 @@ public class ToolApiController {
         private String toolCode;
         private ToolType toolType;
         private String brand;
+        private BigDecimal dailyCharge;
+        private boolean weekdayCharge;
+        private boolean weekendCharge;
+        private boolean holidayCharge;
     }
 }
