@@ -1,4 +1,8 @@
-# tl1124 - Tool Depot Checkout Service
+# tl1124 - Tool Depot Checkout Microservice
+
+## Build requirements
+- JDK 21
+- Maven 3.6.x or later
 
 ## Build & unit test instructions
 
@@ -8,7 +12,7 @@ From command line at the root of the project, run the following command:
 
 If the build and unit tests are successful, then the build jar will be created in the target directory.
 
-## To run checkout service
+## To run checkout microservice
 First build the jar using the build instructions.
 
 Then run the following command from the root of the project:
@@ -17,7 +21,7 @@ Then run the following command from the root of the project:
 
 ## To access test UI
 
-Build and run the service.
+Build and run the microservice.
 
 Open a browser and navigate to:
 
