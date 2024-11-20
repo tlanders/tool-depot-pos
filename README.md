@@ -1,5 +1,7 @@
 # tl1124 - Tool Depot Checkout Microservice
 
+[Tool Depot Rental Checkout Microservice Software Design Document](ToolDepotRentalCheckoutMicroserviceSDD.pdf)
+
 ## Build requirements
 - JDK 21
 - Maven 3.6.x or later
@@ -27,3 +29,18 @@ Open a browser and navigate to:
 
 ```http://localhost:8100/ui/checkout```
 
+## REST Endpoints
+
+Inputs and outputs can be found in the [SDD](ToolDepotRentalCheckoutMicroserviceSDD.pdf).
+
+### Checkout
+
+POST http://localhost:8100/api/rentals
+
+### Find all tools
+
+GET http://localhost:8100/api/tools
+
+### Get tool
+
+GET http://localhost:8100/api/tools/{toolCode}
