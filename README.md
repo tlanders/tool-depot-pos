@@ -1,4 +1,4 @@
-# tl1124 - Tool Depot Checkout Microservice
+# Tool Depot Checkout Microservice
 
 [Tool Depot Rental Checkout Microservice Software Design Document](ToolDepotRentalCheckoutMicroserviceSDD.pdf)
 
